@@ -25,8 +25,6 @@ if (!function_exists('queryChecker')) {
         try {
             $query;
         } catch (\Illuminate\Database\QueryException $error) {
-            // telegram bot goes here
-            // telegramCriticalFailuresBot(urlencode("Hi! Admin\nEndpoint execution failed, find details:\nEndpoint: " . $queryOwer . "\nError: " . $error . "\nTimestamp: " . date("F j, Y, g:i a")), "-507050651");
             return response()->json([
                 'success' => false,
                 'error' => $error,

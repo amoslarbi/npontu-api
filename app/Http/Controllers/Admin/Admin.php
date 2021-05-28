@@ -40,55 +40,6 @@ class Admin extends Controller
     ]);
   }
 
-  protected function dashboardConsumers(Request $request)
-  {
-
-    $someArray = [];
-    $countOtobookFolks = 0;
-    $countGoogleFolks = 0;
-    $countFacebookFolks = 0;
-    $countLinkedInFolks = 0;
-    $countAppleFolks = 0;
-
-    //Search
-    $dashboardConsumers = DB::SELECT("SELECT * FROM consumers");
-    queryChecker($dashboardConsumers, 'Get consumers (admin dashboard)');
-    $totalData = count($dashboardConsumers);
-
-    foreach ($dashboardConsumers as $dashboardConsumersResult) {
-
-      $signin_type = $dashboardConsumersResult->signin_type;
-      $account_status = $dashboardConsumersResult->account_status;
-
-      if ($signin_type == "Otobook") {
-        $countOtobookFolks++;
-      }
-      if ($signin_type == "Google") {
-        $countGoogleFolks++;
-      }
-      if ($signin_type == "Facebook") {
-        $countFacebookFolks++;
-      }
-      if ($signin_type == "LinkedIn") {
-        $countLinkedInFolks++;
-      }
-      if ($signin_type == "Apple") {
-        $countAppleFolks++;
-      }
-
-      array_push($someArray, [
-        'totalConsumers'   => $totalData,
-        'otobook'   => $countOtobookFolks,
-        'google'   => $countGoogleFolks,
-        'facebook'   => $countFacebookFolks,
-        'linkedIn'   => $countLinkedInFolks,
-        'apple'   => $countAppleFolks,
-      ]);
-    }
-    $someJSON = json_encode($someArray);
-    echo $someJSON;
-  }
-
   protected function suspendConsumer(Request $request)
   {
 
@@ -369,31 +320,4 @@ class Admin extends Controller
     }
   }
 
-  protected function checkJWT($bearer)
-  {
-    $secret = config('jwt.secret');
-    $jws = SimpleJWS::load($bearer);
-    if (!$jws->isValid($secret)) {
-      return response()->json([
-        'success' => false,
-        'message' => 'A token is required',
-      ], 401); // unauthorized
-    }
-    return auth()->user();
-  }
-
-  public function queryChecker($query, $queryOwer)
-  {
-    try {
-      $query;
-    } catch (\Illuminate\Database\QueryException $error) {
-      // telegram bot goes here
-      // sendMessageToTelegram($queryOwer . 'Bug', 'SQL-Error: ' . $error . '--' . $query);
-      return response()->json([
-        'success' => false,
-        'error' => $error,
-        'message' => 'Could not connect to server',
-      ]);
-    }
-  }
 }
